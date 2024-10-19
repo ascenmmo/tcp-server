@@ -13,6 +13,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
+	"runtime"
 	"strconv"
 	"testing"
 	"time"
@@ -171,6 +172,7 @@ func listen(t *testing.T, token string) int {
 				max = sub
 			}
 		}
+		fmt.Println(runtime.NumGoroutine())
 		time.Sleep(time.Second * 1)
 	}
 }

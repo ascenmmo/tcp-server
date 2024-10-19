@@ -94,29 +94,6 @@ func (srv *Server) Shutdown() {
 	if srv.srvHealth != nil {
 		_ = srv.srvHealth.Shutdown()
 	}
-	if srvMetrics != nil {
-		_ = srvMetrics.Shutdown()
-	}
-}
-
-func (srv *Server) WithTrace() *Server {
-	if srv.httpGameConnections != nil {
-		srv.httpGameConnections = srv.GameConnections().WithTrace()
-	}
-	if srv.httpServerSettings != nil {
-		srv.httpServerSettings = srv.ServerSettings().WithTrace()
-	}
-	return srv
-}
-
-func (srv *Server) WithMetrics() *Server {
-	if srv.httpGameConnections != nil {
-		srv.httpGameConnections = srv.GameConnections().WithMetrics()
-	}
-	if srv.httpServerSettings != nil {
-		srv.httpServerSettings = srv.ServerSettings().WithMetrics()
-	}
-	return srv
 }
 
 func (srv *Server) GameConnections() *httpGameConnections {
