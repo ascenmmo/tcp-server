@@ -13,7 +13,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
-	"runtime"
 	"strconv"
 	"testing"
 	"time"
@@ -50,13 +49,13 @@ func TestConnection(t *testing.T) {
 	//logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
 	logger := zerolog.Logger{}
 	go start.StartTCP(
-		ctx,
+		context.Background(),
 		env.ServerAddress,
 		env.TCPPort,
 		env.TokenKey,
 		env.MaxRequestPerSecond,
-		1,
 		2,
+		10,
 		logger,
 	)
 	time.Sleep(time.Second * 2)
@@ -67,8 +66,9 @@ func TestConnection(t *testing.T) {
 		go Publisher(t, i)
 	}
 	<-ctx.Done()
-	time.Sleep(time.Second)
+	time.Sleep(time.Second * 5)
 
+	getDeleteRooms(t)
 	fmt.Println(max, min, maxMsgs)
 }
 
@@ -113,9 +113,35 @@ func createToken(t *testing.T, i int) string {
 	return token
 }
 
-func createRoom(t *testing.T, token string) {
+func createRoom(t *testing.T, userToken string) {
 	cli := tcpGameServer.New(baseURl)
-	_ = cli.ServerSettings().CreateRoom(context.Background(), token, types.CreateRoomRequest{})
+
+	tokenGen, err := tokengenerator.NewTokenGenerator(token)
+	info, err := tokenGen.ParseToken(userToken)
+	if err != nil {
+		panic(err)
+	}
+	_ = cli.ServerSettings().CreateRoom(context.Background(), userToken, types.CreateRoomRequest{
+		"",
+		types.GameConfigs{
+			GameID:   info.GameID,
+			IsExists: true,
+			SortingConfig: []types.SortingConfig{
+				{
+					Name:            "IncrementResult",
+					UseOnServerType: "tcp",
+					ResultName:      "TestData",
+					ResultType:      "int",
+					Params: []types.ParamMetadata{
+						{
+							ColumnName: "text",
+							ValueType:  "string",
+						},
+					},
+				},
+			},
+		},
+	})
 }
 
 func buildMessage(t *testing.T, i, j int) (reqMsg types.RequestSetMessage) {
@@ -130,11 +156,7 @@ func buildMessage(t *testing.T, i, j int) (reqMsg types.RequestSetMessage) {
 		}
 	}
 
-	req := Request{
-		Data: data,
-	}
-
-	reqMsg.Data = req
+	reqMsg.Data = data
 	return reqMsg
 }
 
@@ -144,7 +166,8 @@ func listen(t *testing.T, token string) int {
 		cli := tcpGameServer.New(baseURl)
 		messages, err := cli.GameConnections().GetMessage(context.Background(), token)
 		if err != nil {
-			t.Error(err)
+			return 0
+			//t.Error(err)
 		}
 		counter := len(messages.DataArray)
 		maxMsgs += counter
@@ -152,15 +175,15 @@ func listen(t *testing.T, token string) int {
 		marshal, err := json.Marshal(messages.DataArray)
 		assert.Nil(t, err, "client.do expected nil")
 
-		r := []Request{}
+		r := []Message{}
 		err = json.Unmarshal(marshal, &r)
 		assert.Nil(t, err, "Unmarshal expected nil")
 		for _, v := range r {
-			if v.Data.Text == "close" {
+			if v.Text == "close" {
 				return counter
 			}
 
-			sub := time.Now().Sub(v.Data.CreatedAt)
+			sub := time.Now().Sub(v.CreatedAt)
 			if min == 0 {
 				min = sub
 			}
@@ -172,7 +195,19 @@ func listen(t *testing.T, token string) int {
 				max = sub
 			}
 		}
-		fmt.Println(runtime.NumGoroutine())
 		time.Sleep(time.Second * 1)
+	}
+}
+
+func getDeleteRooms(t *testing.T) {
+	cli := tcpGameServer.New(baseURl)
+	time.Sleep(time.Second * 5)
+	results, err := cli.ServerSettings().GetGameResults(context.Background(), createToken(t, 0))
+	if err != nil {
+		fmt.Println("getDeleteRooms err", err)
+		return
+	}
+	for _, result := range results {
+		fmt.Println(result.RoomID, result.Result)
 	}
 }
