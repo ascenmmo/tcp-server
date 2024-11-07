@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"github.com/ascenmmo/tcp-server/internal/storage"
 	utils2 "github.com/ascenmmo/tcp-server/internal/utils"
 	"github.com/ascenmmo/tcp-server/pkg/api/types"
@@ -10,7 +9,6 @@ import (
 	tokentype "github.com/ascenmmo/token-generator/token_type"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog"
-	"runtime"
 	"sync"
 	"time"
 )
@@ -185,12 +183,5 @@ func NewService(token tokengenerator.TokenGenerator, storage memoryDB.IMemoryDB,
 		token:          token,
 		logger:         logger,
 	}
-	go func() {
-		ticker := time.NewTicker(time.Second * 3)
-		for range ticker.C {
-			fmt.Println(fmt.Sprintf("count connections: %d \t max conections: %d", srv.storage.CountConnection(), srv.maxConnections))
-			fmt.Println(fmt.Sprintf("count gorutines: %d ", runtime.NumGoroutine()))
-		}
-	}()
 	return srv
 }
