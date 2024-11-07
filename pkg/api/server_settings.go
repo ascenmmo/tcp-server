@@ -6,12 +6,11 @@
 //go:generate tg transport --services . --out ../../pkg/transport --outSwagger ../../pkg/swagger.yaml
 //go:generate tg client -go --services . --outPath ../../pkg/clients/tcpGameServer
 
-package restconnection
+package api
 
 import (
 	"context"
-	"github.com/ascenmmo/tcp-server/pkg/restconnection/types"
-	"github.com/google/uuid"
+	"github.com/ascenmmo/tcp-server/pkg/api/types"
 )
 
 // @tg http-prefix=api/v1/rest/
@@ -30,10 +29,4 @@ type ServerSettings interface {
 	// @tg http-headers=token|Token
 	// @tg summary=`CreateRoom`
 	CreateRoom(ctx context.Context, token string, createRoom types.CreateRoomRequest) (err error)
-	// @tg http-headers=token|Token
-	// @tg summary=`SetNotifyServer`
-	SetNotifyServer(ctx context.Context, token string, id uuid.UUID, url string) (err error)
-	// @tg http-headers=token|Token
-	// @tg summary=`GetGameResults`
-	GetGameResults(ctx context.Context, token string) (gameConfigResults []types.GameConfigResults, err error)
 }

@@ -1,7 +1,6 @@
-package entities
+package types
 
 import (
-	"github.com/ascenmmo/tcp-server/pkg/restconnection/types"
 	"github.com/google/uuid"
 	"sync"
 	"time"
@@ -12,8 +11,6 @@ type Room struct {
 	RoomID uuid.UUID
 
 	ServerID []uuid.UUID
-
-	GameConfigs types.GameConfigs
 
 	Users []*User
 

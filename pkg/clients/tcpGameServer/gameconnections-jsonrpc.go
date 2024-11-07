@@ -4,9 +4,9 @@ package tcpGameServer
 import (
 	"context"
 	"fmt"
+	"github.com/ascenmmo/tcp-server/pkg/api/types"
 	"github.com/ascenmmo/tcp-server/pkg/clients/tcpGameServer/hasher"
 	"github.com/ascenmmo/tcp-server/pkg/clients/tcpGameServer/jsonrpc"
-	"github.com/ascenmmo/tcp-server/pkg/restconnection/types"
 	"github.com/google/uuid"
 )
 
