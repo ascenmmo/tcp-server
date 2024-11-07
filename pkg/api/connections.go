@@ -6,11 +6,11 @@
 //go:generate tg transport --services . --out ../../pkg/transport --outSwagger ../../pkg/swagger.yaml
 //go:generate tg client -go --services . --outPath ../../pkg/clients/tcpGameServer
 
-package restconnection
+package api
 
 import (
 	"context"
-	"github.com/ascenmmo/tcp-server/pkg/restconnection/types"
+	"github.com/ascenmmo/tcp-server/pkg/api/types"
 	"github.com/google/uuid"
 )
 

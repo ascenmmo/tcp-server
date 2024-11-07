@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/ascenmmo/tcp-server/env"
+	"github.com/ascenmmo/tcp-server/pkg/api/types"
 	"github.com/ascenmmo/tcp-server/pkg/clients/tcpGameServer"
-	"github.com/ascenmmo/tcp-server/pkg/restconnection/types"
 	"github.com/ascenmmo/tcp-server/pkg/start"
 	tokengenerator "github.com/ascenmmo/token-generator/token_generator"
 	tokentype "github.com/ascenmmo/token-generator/token_type"
@@ -55,8 +55,8 @@ func TestConnection(t *testing.T) {
 		env.TokenKey,
 		env.MaxRequestPerSecond,
 		2,
-		10,
 		logger,
+		false,
 	)
 	time.Sleep(time.Second * 2)
 
@@ -68,7 +68,6 @@ func TestConnection(t *testing.T) {
 	<-ctx.Done()
 	time.Sleep(time.Second * 5)
 
-	getDeleteRooms(t)
 	fmt.Println(max, min, maxMsgs)
 }
 
@@ -196,18 +195,5 @@ func listen(t *testing.T, token string) int {
 			}
 		}
 		time.Sleep(time.Second * 1)
-	}
-}
-
-func getDeleteRooms(t *testing.T) {
-	cli := tcpGameServer.New(baseURl)
-	time.Sleep(time.Second * 5)
-	results, err := cli.ServerSettings().GetGameResults(context.Background(), createToken(t, 0))
-	if err != nil {
-		fmt.Println("getDeleteRooms err", err)
-		return
-	}
-	for _, result := range results {
-		fmt.Println(result.RoomID, result.Result)
 	}
 }
