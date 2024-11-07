@@ -114,33 +114,7 @@ func createToken(t *testing.T, i int) string {
 
 func createRoom(t *testing.T, userToken string) {
 	cli := tcpGameServer.New(baseURl)
-
-	tokenGen, err := tokengenerator.NewTokenGenerator(token)
-	info, err := tokenGen.ParseToken(userToken)
-	if err != nil {
-		panic(err)
-	}
-	_ = cli.ServerSettings().CreateRoom(context.Background(), userToken, types.CreateRoomRequest{
-		"",
-		types.GameConfigs{
-			GameID:   info.GameID,
-			IsExists: true,
-			SortingConfig: []types.SortingConfig{
-				{
-					Name:            "IncrementResult",
-					UseOnServerType: "tcp",
-					ResultName:      "TestData",
-					ResultType:      "int",
-					Params: []types.ParamMetadata{
-						{
-							ColumnName: "text",
-							ValueType:  "string",
-						},
-					},
-				},
-			},
-		},
-	})
+	_ = cli.ServerSettings().CreateRoom(context.Background(), userToken, types.CreateRoomRequest{})
 }
 
 func buildMessage(t *testing.T, i, j int) (reqMsg types.RequestSetMessage) {

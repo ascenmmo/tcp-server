@@ -571,37 +571,12 @@ components:
         types.CreateRoomRequest:
             type: object
             properties:
-                gameConfigs:
-                    $ref: '#/components/schemas/types.GameConfigs'
                 time_to_live:
-                    type: string
-        types.GameConfigs:
-            type: object
-            properties:
-                game_id:
-                    type: string
-                    format: uuid
-                sorting_config:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/types.SortingConfig'
-                    nullable: true
-        types.ParamMetadata:
-            type: object
-            properties:
-                column_name:
-                    type: string
-                value_type:
                     type: string
         types.RequestSetMessage:
             type: object
             properties:
                 data: {}
-                server:
-                    type: string
-                    format: uuid
-                token:
-                    type: string
         types.ResponseGetMessage:
             type: object
             properties:
@@ -625,20 +600,4 @@ components:
                 serverPort:
                     type: string
                 serverType:
-                    type: string
-        types.SortingConfig:
-            type: object
-            properties:
-                name:
-                    type: string
-                params:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/types.ParamMetadata'
-                    nullable: true
-                result_name:
-                    type: string
-                result_type:
-                    type: string
-                use_on_server_type:
                     type: string
