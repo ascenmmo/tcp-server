@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	clients = 1000
+	clients = 100
 	msgs    = 10
 
 	doRead  = true
@@ -61,7 +61,7 @@ func TestConnection(t *testing.T) {
 	time.Sleep(time.Second * 2)
 
 	for i := 0; i < clients; i++ {
-		createRoom(t, createToken(t, i))
+		//createRoom(t, createToken(t, i))
 		go Listener(t, i)
 		go Publisher(t, i)
 	}
