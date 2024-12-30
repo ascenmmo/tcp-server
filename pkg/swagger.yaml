@@ -367,6 +367,79 @@ paths:
                                         jsonrpc:
                                             type: string
                                             example: "2.0"
+    /api/v1/rest/serverSettings/getDeletedRooms:
+        post:
+            tags:
+                - ServerSettings
+            summary: GetDeletedRooms
+            parameters:
+                - in: header
+                  name: Token
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            type: object
+                            properties:
+                                id:
+                                    example: 1
+                                    oneOf:
+                                        - type: number
+                                        - type: string
+                                          format: uuid
+                                jsonrpc:
+                                    type: string
+                                    example: "2.0"
+                                params:
+                                    $ref: '#/components/schemas/requestServerSettingsGetDeletedRooms'
+            responses:
+                "200":
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                oneOf:
+                                    - type: object
+                                      properties:
+                                        id:
+                                            example: 1
+                                            oneOf:
+                                                - type: number
+                                                - type: string
+                                                  format: uuid
+                                        jsonrpc:
+                                            type: string
+                                            example: "2.0"
+                                        result:
+                                            $ref: '#/components/schemas/responseServerSettingsGetDeletedRooms'
+                                    - type: object
+                                      properties:
+                                        error:
+                                            type: object
+                                            properties:
+                                                code:
+                                                    type: number
+                                                    format: int32
+                                                    example: -32603
+                                                data:
+                                                    type: object
+                                                    nullable: true
+                                                message:
+                                                    type: string
+                                                    example: not found
+                                            nullable: true
+                                        id:
+                                            example: 1
+                                            oneOf:
+                                                - type: number
+                                                - type: string
+                                                  format: uuid
+                                        jsonrpc:
+                                            type: string
+                                            example: "2.0"
     /api/v1/rest/serverSettings/getServerSettings:
         post:
             tags:
@@ -535,6 +608,14 @@ components:
                     $ref: '#/components/schemas/types.CreateRoomRequest'
         requestServerSettingsGetConnectionsNum:
             type: object
+        requestServerSettingsGetDeletedRooms:
+            type: object
+            properties:
+                ids:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/types.GetDeletedRooms'
+                    nullable: true
         requestServerSettingsGetServerSettings:
             type: object
         requestServerSettingsHealthCheck:
@@ -558,6 +639,14 @@ components:
                     format: int
                 exists:
                     type: boolean
+        responseServerSettingsGetDeletedRooms:
+            type: object
+            properties:
+                deletedIds:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/types.GetDeletedRooms'
+                    nullable: true
         responseServerSettingsGetServerSettings:
             type: object
             properties:
@@ -571,8 +660,18 @@ components:
         types.CreateRoomRequest:
             type: object
             properties:
-                time_to_live:
+                roomTTl:
+                    type: number
+                    format: int64
+        types.GetDeletedRooms:
+            type: object
+            properties:
+                gameID:
                     type: string
+                    format: uuid
+                roomID:
+                    type: string
+                    format: uuid
         types.RequestSetMessage:
             type: object
             properties:
